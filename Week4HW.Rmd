@@ -343,13 +343,96 @@ The following exercises will use the COVID-19 data from the NYT.
 
   11. Create a map that colors the states by the most recent cumulative number of COVID-19 cases (remember, these data report cumulative numbers so you don't need to compute that). Describe what you see. What is the problem with this map?
   
+```{r}
 
+states_map <- map_data("state")
+
+new_covid19 <-covid19 %>% 
+  group_by(state) %>% 
+  summarise(cumulative_cases = max(cases)) %>%
+  mutate(state = str_to_lower(state)) 
+
+new_covid19 %>% 
+  ggplot() +
+  geom_map(map = states_map,
+        aes(map_id = state, 
+            fill = cumulative_cases)) +
+  expand_limits(x = states_map$long, 
+                y = states_map$lat) + 
+  theme_map() +
+  labs( title = "Cumulative Covid19 Cases in the United States of America",
+        fill = "Cumulative Cases") +
+  scale_fill_viridis_c() 
+```
+### The map shows the cumulative cases however this is biased towards population size of the state. Texas and California have the highest populations in the US and therefore the most cases. 
   
+
   12. Now add the population of each state to the dataset and color the states by most recent cumulative cases/10,000 people. See the code for doing this with the Starbucks data. You will need to make some modifications. 
+```{r}
+states_map <- map_data("state")
+
+new_covid19 <-covid19 %>% 
+  group_by(state) %>% 
+  summarise(cumulative_cases = max(cases)) %>%
+  mutate(state = str_to_lower(state)) 
+
+census_pop_est_2018 <- read_csv("https://www.dropbox.com/s/6txwv3b4ng7pepe/us_census_2018_state_pop_est.csv?dl=1") %>% 
+  separate(state, into = c("dot","state"), extra = "merge") %>% 
+  select(-dot) %>% 
+  mutate(state = str_to_lower(state))
+
+
+
+covid_with2018pop <- 
+  new_covid19 %>% 
+  left_join(census_pop_est_2018,
+            by = "state") %>% 
+  mutate(cases_per10000 = (cumulative_cases/est_pop_2018)* 10000)
+
+covid_with2018pop %>% 
+  ggplot() +
+  geom_map(map = states_map,
+        aes(map_id = state, 
+            fill = cases_per10000)) +
+  expand_limits(x = states_map$long, 
+                y = states_map$lat) + 
+  theme_map() +
+  labs( title = "Covid19 Cases in the United States of America",
+        fill = "Cases per 10,000 people") +
+  scale_fill_viridis_c() 
+```
   
   
   
   13. **CHALLENGE** Choose 4 dates spread over the time period of the data and create the same map as in exercise 12 for each of the dates. Display the four graphs together using faceting. What do you notice?
+  
+```{r}
+
+states_map <- map_data("state")
+
+date_covid19 <- covid19 %>% 
+  filter(date %in% ymd(c( "2020-03-18", "2020-05-18", "2020-07-18", "2020-09-18"))) %>% 
+  group_by(state) %>% 
+  mutate(state = str_to_lower(state)) %>% 
+  left_join(census_pop_est_2018,
+            by = "state") %>% 
+  mutate(cases_per10000 = (cases/est_pop_2018)* 10000) 
+
+
+date_covid19 %>% 
+  ggplot() +
+  geom_map(map = states_map,
+        aes(map_id = state, 
+            fill = cases_per10000)) +
+  expand_limits(x = states_map$long, 
+                y = states_map$lat) + 
+  facet_wrap(vars(date)) +
+  labs( title = "Covid19 Cases in the United States of America",
+        fill = "Cases per 10,000 people") + 
+  theme_map() +
+  theme(legend.background = element_blank())
+```
+  
   
 ## Minneapolis police stops
 
