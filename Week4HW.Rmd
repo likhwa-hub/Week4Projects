@@ -519,9 +519,12 @@ leaflet(mpls_all) %>%
 ### As an international student I am interested in seeing the proportion of foreign born residents in particular neighborhoods. In this map we see that the Cedar Riverside and East Phillips neighborhoods have more than 40% of their population made up of foreign born residents. This makes sense as there is a high number of east african migrants that live in this area. I find it interesting too that the foreign borns are not spreadout through Minneapolis, but rather life close to eachother to retain a sense of community. Their central location could also be a result of intentional housing policies that house migrants in these areas.  
   
   
-## GitHub link
 
   19. Below, provide a link to your GitHub page with this set of Weekly Exercises. Specifically, if the name of the file is 04_exercises.Rmd, provide a link to the 04_exercises.md file, which is the one that will be most readable on GitHub.
+  
+## GitHub link
+https://github.com/likhwa-hub/Week4Projects/blob/master/Week4HW.Rmd
+
 
 
 **DID YOU REMEMBER TO UNCOMMENT THE OPTIONS AT THE TOP?**
